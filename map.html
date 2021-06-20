@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can U Control</title>
+
+    <link rel="stylesheet" href="../libs/jquery-ui/jquery-ui.css">
+
+	<script src="../libs/d3.v3.min.js"></script>
+	<script src="../libs/jquery-min.js"></script>
+    <script src="../libs/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../libs/jquery.ui.touch-punch.min.js"></script>
+
+
+	<script src="../libs/plotly-latest.min.js"></script>
+	<script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script src="../libs/MathJax-2.7.3/MathJax.js?config=TeX-AMS_CHTML"></script>
+
+
+
+	<style type="text/css">
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+}
+
+#mainCanvas {
+    width : 1200px;
+    height: 800px;
+    border: 2px solid black;
+    background-image: url(images/map.png);
+    background-size: 1200px 800px;
+}
+
+	</style>
+
+
+</head>
+<body style='transform: scale(0.7); transform-origin: 0 0;'>
+    
+    <div id="helpDiv" style="display: none;" title="Can U COntrol WebApp"></div>
+
+    <div id='confirmDialog' title='Can U Control' style='display: none;'> 
+        Are you sure you want to reset all the progress?
+    </div>
+
+    <div id="mainCanvas" style="position:absolute;">
+
+        <img src='images/linear.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+
+        <img src='images/nonlinear.png' width="110" style='position: absolute; top: 80px; left: 700px;'>
+
+        <img src='images/switch.png' width="110" style='position: absolute; top: 180px; left: 980px;'>
+
+        <img src='images/quantized.png' width="110" style='position: absolute; top: 580px; left: 500px;'>
+
+        <img id = 'l1l1'  src='images/arrow.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+        <img id = 'l1l2'  src='images/arrow.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+        <img id = 'l1l3'  src='images/arrow.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+        <img id = 'l1l4'  src='images/arrow.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+
+        <img id = 'l2l1'  src='images/arrow.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+        <img id = 'l2l2'  src='images/arrow.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+        <img id = 'l2l3'  src='images/arrow.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+        <img id = 'l2l4'  src='images/arrow.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+
+        <img id = 'l3l1'  src='images/arrow.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+        <img id = 'l3l2'  src='images/arrow.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+        <img id = 'l3l3'  src='images/arrow.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+        <img id = 'l3l4'  src='images/arrow.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+
+        <img id = 'l4l1'  src='images/arrow.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+        <img id = 'l4l2'  src='images/arrow.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+        <img id = 'l4l3'  src='images/arrow.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+        <img id = 'l4l4'  src='images/arrow.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+
+        <img id = 'playerBase'  src='images/cross.png' width="110" style='position: absolute; top: 260px; left: 60px;'>
+        <img id = 'player'  src='images/res1.png' height="170" style='position: absolute; top: 260px; left: 60px;'>
+
+        <img  src='images/play.png' width="100" style='position: absolute; top: 580px; left: 240px;' onclick="play()">
+        <img  src='images/reset.png' width="80" style='position: absolute; top: 580px; left: 60px;' onclick="reset()">
+        <img  src='images/arrow.png' width="100" style='position: absolute; top: 720px; left: 60px; transform: rotate(180deg);' onclick="window.location = 'index.html'">
+
+        <img id = 'soundImg' src='images/no_sound.png' onclick="playBgMusic()" width="80" style="vertical-align: middle; position: absolute; left: 240px; top: 700px; display: none;">
+
+    </div>
+
+    <div id="dialog-confirm" title="Can U Control?" style="display: none; border: none;">
+    </div>
+
+</body>
+
+<script src="../libs/p5/p5.js"></script>
+<script src="../libs/p5/addons/p5.sound.min.js"></script>
+
+<script>
+
+let _positions = [ 
+[{x:60, y:160}, {x:120, y:100}, {x:220, y:150},  {x:300, y:240} ],
+[{x:400, y:350}, {x:500, y:300}, {x:600, y:250},  {x:700, y:300} ],
+[{x:900, y:350}, {x:1000, y:300}, {x:1050, y:400},  {x:1000, y:500} ],
+[{x:900, y:650}, {x:800, y:650},  {x:720, y:600}, {x:630, y:600} ],
+];
+
+let _rotations = [ 
+[-60.0, 0.0, 60.0, 50.0],
+[0.0, -50.0, 0.0, 30.0],
+[-50.0, 0.0, 90.0, 130.0],
+[160.0, 180.0, -130.0, 130.0],
+];
+
+
+
+
+let gameData = JSON.parse( window.localStorage.getItem('CanUControl') );
+
+if (gameData == null) {
+    gameData = {
+        character : 0,
+        state : {
+            level : 1,
+            land : 1
+        }
+    }
+}
+
+
+
+
+
+for (let i = 1; i<=4; i++) {
+    for (let j = 1; j<=4; j++) {
+        $('#l'+i+'l'+j).css('top', _positions[i-1][j-1].y);
+        $('#l'+i+'l'+j).css('left', _positions[i-1][j-1].x);
+        $('#l'+i+'l'+j).css('transform', 'rotate('+_rotations[i-1][j-1]+'deg)');
+
+        console.log(i > gameData.state.land);
+
+        if (i > gameData.state.land) {
+            $('#l'+i+'l'+j).css('filter','grayscale(100%)');
+        }
+        if ( (i == gameData.state.land) && (j > gameData.state.level) ) {
+            $('#l'+i+'l'+j).css('filter','grayscale(100%)');
+        }
+    }
+}
+
+
+let p = _positions[gameData.state.land-1][gameData.state.level-1];
+$('#player').attr('src','images/res'+(gameData.character+1)+'.png');
+$('#player').css('top', p.y-140);
+$('#player').css('left', p.x);
+$('#playerBase').css('top', p.y);
+$('#playerBase').css('left', p.x);
+
+
+
+function play() {
+    window.location = 'level.html';
+}
+
+function reset() {
+    $('#confirmDialog').dialog({
+        resizable: false,
+        width: 300,
+        height: 180,
+        modal: true,
+        buttons: {
+            'yes': function() {
+                console.log('yes');
+                window.localStorage.clear();
+                location.reload();
+                $(this).dialog('close');
+            },
+            'no': function() {
+                console.log('no');
+                $(this).dialog('close');
+            }
+        }
+    });
+    //window.localStorage.clear()
+}
+
+
+var time = 0.0;
+$('#player').css('transform-origin','50% 100%');
+animFnc = ()=>{
+    let scale = (1.0+0.1*Math.sin(time));
+    $('#player').css('transform', 'scaleY('+scale+')');
+    time += 0.1;
+    setTimeout(()=>{
+        animFnc();
+    },10);
+}
+animFnc();
+
+
+</script>
+
+
+<script src="../libs/helpLib.js"></script>
+<link rel="stylesheet" href="../libs/helpLib.css">
+
+
+<script>
+
+    let bgMusic;
+
+    let musicFiles = ['sounds/linearland.48.mono.mp3', 'sounds/nonlinearland.48.mono.mp3', 'sounds/switchingland.48.mono.mp3', 'sounds/quantizedland.48.mono.mp3'];
+
+    function preload() {
+        soundFormats('mp3', 'wav');
+        bgMusic = loadSound(musicFiles[gameData.state.land-1], ()=>{
+            $('#soundImg').show();
+        });
+    }
+
+
+    function setup() {
+        //bgMusic.play();
+    }
+
+
+    function playBgMusic() {
+        if (!bgMusic.isPlaying()) {
+            $('#soundImg').attr('src','images/sound.png');
+            bgMusic.loop();
+        } else {
+            $('#soundImg').attr('src','images/no_sound.png');
+            bgMusic.stop();
+        }
+    }
+
+</script>
+
+
+
+</html>

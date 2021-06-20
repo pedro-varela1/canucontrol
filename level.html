@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can U Control</title>
+
+    <link rel="stylesheet" href="../libs/jquery-ui/jquery-ui.css">
+
+	<script src="../libs/d3.v3.min.js"></script>
+	<script src="../libs/jquery-min.js"></script>
+    <script src="../libs/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../libs/jquery.ui.touch-punch.min.js"></script>
+
+
+	<script src="../libs/plotly-latest.min.js"></script>
+	<script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script src="../libs/MathJax-2.7.3/MathJax.js?config=TeX-AMS_CHTML"></script>
+
+
+
+	<style type="text/css">
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+}
+
+#mainCanvas {
+    width : 1200px;
+    height: 800px;
+    border: 2px solid black;
+    background-color: lightblue;
+    background-size: 1200px 800px;
+}
+
+
+
+.ui-widget-content.ui-dialog
+{
+   border: none;
+}
+
+.ui-dialog {
+    background: transparent;
+    border: none;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    display: none;
+}
+
+
+.ui-widget-content {
+    border: none;
+}
+
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+    float: none;
+}
+
+
+
+.ui-dialog .ui-dialog-buttonpane {
+    background-color: transparent;
+    margin: 0px 0px 50px 0px;
+    text-align: center;
+}
+
+
+.ui-slider {
+    background:transparent;
+    background-clip:unset;
+    border:none;
+}
+
+.ui-slider .ui-slider-handle {
+    display: block;
+    margin-top: -80px;
+    position: absolute;
+    left: 5px;
+    width: 115px;
+    height: 160px;
+    background: transparent;
+    background-image: url(images/joystick_thumb.png);
+    background-size: 115px 160px;
+    border: none;
+}
+
+#dialog-confirm-msg {
+    text-align: center;
+    vertical-align: middle;
+    display: table-cell;
+    height: 250px;
+    width: 500px;
+    border: none;
+}
+
+
+
+	</style>
+
+
+</head>
+<body style='transform: scale(0.7); transform-origin: 0 0;'>
+    
+    <div id="helpDiv" style="display: none;" title="Can U COntrol WebApp"></div>
+
+
+    
+    <div id="mainCanvas" style="position:relative;">
+        
+        <div id="sliderJoystick-bg" style="width: 115px; height: 600px; position:absolute; top:10%; left:90%; background-image : url(images/double_arrow.png)">
+            <div id="sliderJoystick" style="display: block; width: 115px; height: 400px; position: relative; left:0px; top: 170px;"></div>
+        </div>
+
+        </div>
+        
+        <img id = 'pauseButton' src='images/pause.png' onclick = "setPause()" style='top: 680px; left: 150px; position:absolute; width: 100px; -webkit-filter: grayscale(100%); filter: grayscale(100%);'>
+
+        <img id = 'restartButton' src='images/restart.png' onclick="restartButtonClicked()" style='top: 680px; left: 250px; position:absolute; width: 100px;'>
+
+        <img id = 'backButton' src='images/arrow.png' onclick="backButtonClicked();" style='top: 700px; left: 40px; position:absolute; width: 100px; transform: rotate(180deg);'>
+
+        <img id = 'soundImg' src='images/no_sound.png' onclick="playBgMusic()" width="80" style="vertical-align: middle; position: absolute; left: 360px; top: 700px; display: none;">
+
+        <img id = 'autoPilotImg' src='images/auto_pilot.png' onclick="setAutoPilot()" width="80" style="vertical-align: middle; position: absolute; left: 460px; top: 700px; -webkit-filter: grayscale(100%); filter: grayscale(100%);">
+    </div>
+
+    <div id="dialog-confirm" title="Can U Control?" style="display: none; border: none;">
+        <div id='dialog-confirm-msg' > <img id='dialog-img' src=''> </div>
+    </div>
+
+</body>
+
+<script src="../libs/p5/p5.js"></script>
+<script src="../libs/p5/addons/p5.sound.min.js"></script>
+
+<script src="vars.js"></script>
+<script src="model.js"></script>
+<script src="view.js"></script>
+<script src="controller.js"></script>
+<script src="util.js"></script>
+
+
+<script src="../libs/helpLib.js"></script>
+<link rel="stylesheet" href="../libs/helpLib.css">
+
+
+
+
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can U Control</title>
+
+    <link rel="stylesheet" href="../libs/jquery-ui/jquery-ui.css">
+
+	<script src="../libs/d3.v3.min.js"></script>
+	<script src="../libs/jquery-min.js"></script>
+    <script src="../libs/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../libs/jquery.ui.touch-punch.min.js"></script>
+    <script type="text/javascript" src="../libs/external/node_modules/animejs/lib/anime.min.js"></script>
+
+
+	<script src="../libs/plotly-latest.min.js"></script>
+	<script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script src="../libs/MathJax-2.7.3/MathJax.js?config=TeX-AMS_CHTML"></script>
+
+    <script src="../libs/p5/p5.js"></script>
+    <script src="../libs/p5/addons/p5.sound.min.js"></script>
+
+
+	<style type="text/css">
+
+.button {
+    background-image: url(images/button.png); 
+    background-size: 50%; 
+    background-repeat: no-repeat; 
+    background-position-x: 50%;
+    background-position-y: 50%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+}
+
+#mainCanvas {
+    width : 1200px;
+    height: 800px;
+    border: 2px solid black;
+    background-image: url(images/bg1_ipad.png);
+    background-size: 1200px 800px;
+}
+
+
+
+#td1 {
+    background-size: 100% 100%;
+    background-image: url(images/bg6.png);
+}
+
+td {
+    text-align: center;
+}
+
+	</style>
+
+
+</head>
+<body style='transform: scale(0.7); transform-origin: 0 0;'>
+    
+    <div id="helpDiv" style="display: none;" title="Can U COntrol WebApp"></div>
+
+    <div id='confirmDialog' title='Can U Control' style='display: none;'> 
+        Are you sure you want to reset all the progress?
+    </div>
+
+    <div id="mainCanvas" style="position:absolute;">
+
+        <table style="width: 100%; height: 100%;" >
+            <tr>
+            <td style="width: 35%">
+
+                <table style="height: 100%; width: 100%;" >
+                    <tr> 
+                        <td class = 'button'>  
+                            <img id="menu1" src="images/play2.png" width="120px" onclick="window.location = 'level.html'">
+                        </td>
+                    </tr>
+                    <tr> 
+                        <td class = 'button'>  
+                            <img id="menu2" src="images/map2.png" width="120px" onclick="window.location = 'map.html'">
+                        </td>
+                    </tr>
+                    <tr> 
+                        <td class = 'button'>  
+                            <img id="menu3" src="images/player.png" width="120px" onclick="window.location = 'character.html'">
+                        </td>
+                    </tr>
+                    <tr> 
+                        <td class = 'button'>  
+                            <img id="menu4" src="images/about.png" width="120px" onclick="window.location = 'about'">
+                        </td>
+                    </tr>
+                </table>
+            </td>
+
+            <td style="vertical-align: top; padding-top: 40px;">
+                <p><img src="images/canucontrol.png" width="60%"></p>
+                <p><img src="images/gang vector 1.png" width="80%"></p>
+                <p>&nbsp</p>
+                <p>
+                    <a href='http://www.laci.ufrn.br'><img id='laci' src="images/laci_logo.png" width="20%" style="vertical-align: middle;"> </a>
+                    &nbsp;&nbsp;&nbsp;
+                    <img id='dee' src="images/dee_small.png" width="25%" style="vertical-align: middle;"> 
+                    &nbsp;&nbsp;&nbsp;
+                    <img src="images/ufrn.png" width="30%" style="vertical-align: middle;">
+                    <br>
+                    <img id = 'soundImg' src='images/no_sound.png' onclick="playBgMusic()" width="100" style="vertical-align: middle; display: none;">
+                </p> 
+            </td>
+
+
+            </tr>
+        </table>        
+
+<!--        <img id = 'play'  src='images/play.png' width="120" style='position: absolute; top: 650px; left: 60px;' onclick="play()"> -->
+
+    </div>
+
+    <div id="dialog-confirm" title="Can U Control?" style="display: none; border: none;">
+        <p style='text-align: center;'> Welcome to "Can U Control". Use this menu to navigate on the game.</p>
+        <p>&nbsp</p>
+
+        <p>
+            <table>
+                <tr>
+                <td width='70%'>
+                    <table width='100%'>
+                        <tr>
+                            <td style="width:140px;">
+                                <img src = "images/play2.png" style="vertical-align: middle; width: 100px;"> </td><td style="text-align: left;"> Plays the current level you are in.<br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:140px;">
+                                <img src = "images/map2.png" style="vertical-align: middle; width: 100px;"> </td><td style="text-align: left;"> Takes you to the map where you will see the 4 lands. Each one presents a different kind of challenge. <br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:140px;">
+                                <img src = "images/player.png" style="vertical-align: middle; width: 100px;"> </td><td style="text-align: left;"> Here you can choose your character. <br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width:140px;">
+                                <img src = "images/about.png" style="vertical-align: middle; width: 100px;"> </td><td style="text-align: left;"> here you will find all all the technical and "behind the scenes" information about the game. <br>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+
+                <td width='70%'>
+
+                    <table>
+                        <tr>
+                            <td>
+                                <img src='images/joystick.png' width="40">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                This will be your joystick. you can move the little paper fold up and down.
+                            </td>
+                        </tr>
+                    </table>
+
+
+                </td>
+                </tr>
+
+
+            </table>
+        </p>
+
+        <p>&nbsp</p>
+        <p style='text-align: justify;'>
+            This game is intended to help students to understand the concept of state space. Players are encouraged to look for clues and artifacts everywhere. From the names of the lands, to the messages you receive during the game. They all were thought up carefully to have a meaning in the context of state space.
+        </p>
+        <p style='text-align: justify;'>
+            By moving the joystick, you will control how the character moves. As part of the game you are challenged to realize how does it affect the character movement. The bit hint is <b>"STATE SPACE dynamics"</b>!
+        </p>
+        <p>&nbsp</p>
+
+        <p>
+            I hope you like it and thanks for playing!
+        </p>
+    </div>
+
+</body>
+
+
+<script>
+
+
+
+var gameData = JSON.parse( window.localStorage.getItem('CanUControl') );
+
+
+function doAnimation(menu) {
+    
+    $('#'+menu).css('transform-origin','50% 100%');
+
+    // Create a timeline with default parameters
+    tl = anime.timeline({
+        targets: '#'+menu,
+        easing: 'linear',
+        duration: 300,
+        loop: true
+    });
+
+    tl.add({
+        scaleY: 1.2,
+        skewX: 20
+    }).add({
+        scaleY: 1,
+        skewX: 0
+    }).add({
+        scaleY: 1.2,
+        skewX: -20
+    }).add({
+        scaleY: 1,
+        skewX: 0
+    })
+
+    tl.play();
+}
+
+setTimeout(()=>{
+    doAnimation('menu1');
+},0);
+setTimeout(()=>{
+    doAnimation('menu2');
+},500);
+setTimeout(()=>{
+    doAnimation('menu3');
+},200);
+setTimeout(()=>{
+    doAnimation('menu4');
+},300);
+
+
+function play() {
+    // store char
+    window.location = 'map.html';
+}
+
+
+var time = 0.0;
+for (let i=1; i<=15; i++)
+    $('#char'+i).css('transform-origin','50% 100%');
+animFnc = ()=>{
+    for (let i=1; i<=15; i++) {
+        let scale = (1.0+0.1*Math.sin(time+i));
+        $('#char'+i).css('transform', 'scaleY('+scale+')');
+    }
+    time += 0.1;
+    setTimeout(()=>{
+        animFnc();
+    },10);
+}
+animFnc();
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+<script>
+
+    let bgMusic;
+
+    function preload() {
+        soundFormats('mp3', 'wav');
+        bgMusic = loadSound('sounds/credits.48.mono.mp3', ()=>{
+            $('#soundImg').show();
+
+            $('#dialog-confirm').dialog({
+                resizable: false,
+                modal: true,
+                width: 700,
+                buttons : {
+                    "Ok" : () => {
+                        $('#dialog-confirm').dialog( "close" );
+                    }
+                },
+                close : () => {
+                    playBgMusic();
+                }
+            });
+
+        });
+    }
+
+
+    function setup() {
+        //bgMusic.play();
+    }
+
+
+    function playBgMusic() {
+        if (!bgMusic.isPlaying()) {
+            $('#soundImg').attr('src','images/sound.png');
+            bgMusic.loop();
+        } else {
+            $('#soundImg').attr('src','images/no_sound.png');
+            bgMusic.stop();
+        }
+    }
+
+
+
+</script>
+
+<script src="../libs/helpLib.js"></script>
+<link rel="stylesheet" href="../libs/helpLib.css">
+
+
+
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can U Control</title>
+
+    <link rel="stylesheet" href="../libs/jquery-ui/jquery-ui.css">
+
+	<script src="../libs/d3.v3.min.js"></script>
+	<script src="../libs/jquery-min.js"></script>
+    <script src="../libs/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../libs/jquery.ui.touch-punch.min.js"></script>
+
+
+	<script src="../libs/plotly-latest.min.js"></script>
+	<script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script src="../libs/MathJax-2.7.3/MathJax.js?config=TeX-AMS_CHTML"></script>
+
+
+
+	<style type="text/css">
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+}
+
+#mainCanvas {
+    width : 1200px;
+    height: 800px;
+    border: 2px solid black;
+    background-image: url(images/large_bg.png);
+    background-size: 100%;
+}
+
+
+
+	</style>
+
+
+</head>
+<body style='transform: scale(0.7); transform-origin: 0 0;'>
+    
+    <div id="helpDiv" style="display: none;" title="Can U COntrol WebApp"></div>
+
+    <div id='confirmDialog' title='Can U Control' style='display: none;'> 
+        Are you sure you want to reset all the progress?
+    </div>
+
+    <div id="mainCanvas" style="position:absolute; overflow: scroll;">
+
+        <img src='images/credits.png' width="100%" >
+
+    </div>
+
+    <img  src='images/arrow.png' width="100" style='position: absolute; top: 720px; left: 60px; transform: rotate(180deg);' onclick="window.location = 'index.html'">
+
+    <img id = 'soundImg' src='images/no_sound.png' onclick="playBgMusic()" width="80" style="vertical-align: middle; position: absolute; left: 200px; top: 710px; display: none;">
+
+</body>
+
+<script src="../libs/p5/p5.js"></script>
+<script src="../libs/p5/addons/p5.sound.min.js"></script>
+
+
+<script src="../libs/helpLib.js"></script>
+<link rel="stylesheet" href="../libs/helpLib.css">
+
+
+
+<script>
+
+    let bgMusic;
+
+    function preload() {
+        soundFormats('mp3', 'wav');
+        bgMusic = loadSound('sounds/credits.48.mono.mp3', ()=>{
+            $('#soundImg').show();
+        });
+    }
+
+
+    function setup() {
+        //bgMusic.play();
+    }
+
+
+    function playBgMusic() {
+        if (!bgMusic.isPlaying()) {
+            $('#soundImg').attr('src','images/sound.png');
+            bgMusic.loop();
+        } else {
+            $('#soundImg').attr('src','images/no_sound.png');
+            bgMusic.stop();
+        }
+    }
+
+</script>
+
+
+</html>

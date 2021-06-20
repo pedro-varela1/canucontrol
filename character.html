@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can U Control</title>
+
+    <link rel="stylesheet" href="../libs/jquery-ui/jquery-ui.css">
+
+	<script src="../libs/d3.v3.min.js"></script>
+	<script src="../libs/jquery-min.js"></script>
+    <script src="../libs/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../libs/jquery.ui.touch-punch.min.js"></script>
+
+
+	<script src="../libs/plotly-latest.min.js"></script>
+	<script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script src="../libs/MathJax-2.7.3/MathJax.js?config=TeX-AMS_CHTML"></script>
+
+
+
+	<style type="text/css">
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+}
+
+#mainCanvas {
+    width : 1200px;
+    height: 800px;
+    border: 2px solid black;
+    background-image: url(images/bg3.png);
+    background-size: 1200px 800px;
+}
+
+
+/*
+
+.ui-widget-content.ui-dialog
+{
+   border: none;
+}
+
+.ui-dialog {
+    background: transparent;
+    border: none;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    display: none;
+}
+
+
+.ui-widget-content {
+    border: none;
+}
+
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+    float: none;
+}
+
+
+
+.ui-dialog .ui-dialog-buttonpane {
+    background-color: transparent;
+    margin: 0px 0px 50px 0px;
+    text-align: center;
+}
+
+*/
+
+
+#td1 {
+    background-size: 100% 100%;
+    background-image: url(images/bg6.png);
+}
+
+td {
+    text-align: center;
+}
+
+	</style>
+
+
+</head>
+<body style='transform: scale(0.7); transform-origin: 0 0;'>
+    
+    <div id="helpDiv" style="display: none;" title="Can U COntrol WebApp"></div>
+
+    <div id='confirmDialog' title='Can U Control' style='display: none;'> 
+        Are you sure you want to reset all the progress?
+    </div>
+
+    <div id="mainCanvas" style="position:absolute;">
+
+        <table width="100%" height="80%">
+            <tr>
+                <td id='td1'><img id = 'char1'  src='images/res1.png' height = "170"></td>
+                <td id='td2'><img id = 'char2'  src='images/res2.png' height = "170"></td>
+                <td id='td3'><img id = 'char3'  src='images/res3.png' height = "170"></td>
+                <td id='td4'><img id = 'char4'  src='images/res4.png' height = "170"></td>
+                <td id='td5'><img id = 'char5'  src='images/res5.png' height = "170"></td>
+            </tr>
+            <tr>
+                <td id='td6'><img id = 'char6'  src='images/res6.png' height = "170"></td>
+                <td id='td7'><img id = 'char7'  src='images/res7.png' height = "170"></td>
+                <td id='td8'><img id = 'char8'  src='images/res8.png' height = "170"></td>
+                <td id='td9'><img id = 'char9'  src='images/res9.png' height = "170"></td>
+                <td id='td10'><img id = 'char10'  src='images/res10.png' height = "170"></td>
+            </tr>
+            <tr>
+                <td id='td11'><img id = 'char11'  src='images/res11.png' height = "170"></td>
+                <td id='td12'><img id = 'char12'  src='images/res12.png' height = "170"></td>
+                <td id='td13'><img id = 'char13'  src='images/res13.png' height = "170"></td>
+                <td id='td14'><img id = 'char14'  src='images/res14.png' height = "170"></td>
+                <td id='td15'><img id = 'char15'  src='images/res15.png' height = "170"></td>
+            </tr>
+        </table>
+        
+
+        <img id = 'play'  src='images/play.png' width="120" style='position: absolute; top: 650px; left: 240px;' onclick="play()">
+
+        <img  src='images/arrow.png' width="100" style='position: absolute; top: 680px; left: 60px; transform: rotate(180deg);' onclick="window.location = 'index.html'">
+
+    </div>
+
+    <div id="dialog-confirm" title="Can U Control?" style="display: none; border: none;">
+    </div>
+
+</body>
+
+<script src="../libs/p5/p5.js"></script>
+
+<script>
+
+
+var gameData = JSON.parse( window.localStorage.getItem('CanUControl') );
+
+for (let i=1; i<=15; i++) {
+    $('#char'+i).on('click',()=>{
+        selectChar(i);
+    });
+}
+
+selectChar(gameData.character+1);
+
+function selectChar(j) {
+    for (let i=1; i<=15; i++) {
+        $('#td'+i).css('background-image','none');
+    }
+    $('#td'+j).css({'background-image':'url(images/bg6.png)' ,'background-size': '100% 100%'});
+    
+    gameData.character = j-1;
+
+    window.localStorage.setItem('CanUControl', JSON.stringify(gameData));
+}
+
+
+function play() {
+    // store char
+    window.location = 'map.html';
+}
+
+
+var time = 0.0;
+for (let i=1; i<=15; i++)
+    $('#char'+i).css('transform-origin','50% 100%');
+animFnc = ()=>{
+    for (let i=1; i<=15; i++) {
+        let scale = (1.0+0.1*Math.sin(time+i));
+        $('#char'+i).css('transform', 'scaleY('+scale+')');
+    }
+    time += 0.1;
+    setTimeout(()=>{
+        animFnc();
+    },10);
+}
+animFnc();
+
+
+</script>
+
+
+<script src="../libs/helpLib.js"></script>
+<link rel="stylesheet" href="../libs/helpLib.css">
+
+
+
+</html>
