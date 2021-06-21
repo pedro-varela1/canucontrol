@@ -40,10 +40,12 @@ function playBgMusic(force) {
 
     if (!sounds.bgMusic.isPlaying() || force) {
         $('#soundImg').attr('src','images/sound.png');
-        sounds.bgMusic.loop();
+        if (!sounds.bgMusic.isPlaying())
+          sounds.bgMusic.loop();
     } else {
         $('#soundImg').attr('src','images/no_sound.png');
-        sounds.bgMusic.stop();
+        if (sounds.bgMusic.isPlaying())
+          sounds.bgMusic.stop();
     }
 }
 
@@ -52,7 +54,7 @@ function playBgMusic(force) {
 loads the music for the current stage
 */
 function loadBgMusic(state) {
-  if (sounds.bgMusic)
+  if (sounds.bgMusic && sounds.bgMusic.isPlaying())
     sounds.bgMusic.stop();
 
   $('#soundImg').attr('src','images/no_sound.png');
@@ -475,20 +477,23 @@ function draw() {
     // collision tests
     dynamic.testCollisionWithTarget( (p1, p2) => { 
 
-      targetCollision(p1, p2);
+      if (!PAUSE)
+        targetCollision(p1, p2);
 
     });
 
     dynamic.testCollisionWithBonuses( (p1, p2) => { 
 
-      bonusCollision(p1, p2);
+      if (!PAUSE)
+        bonusCollision(p1, p2);
 
     });
 
 
     dynamic.testCollisionWithEnemies( (p1, p2) => { 
 
-      enemyCollision(p1, p2);
+      if (!PAUSE)
+        enemyCollision(p1, p2);
 
     });
 
