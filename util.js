@@ -1,3 +1,9 @@
+function formatNumber(x) {
+    return ''+(Math.round(100*x)/100);
+}
+fn = formatNumber;
+
+
 function rand() {
     return -1.0 + 2.0*Math.random();
 }
@@ -35,7 +41,7 @@ function drawArrow(base, vec, myColor, weight, simple = false) {
     }
 }
 
-  function print(x0, y0, msg, scale = 1.0) {
+  function coolPrint(x0, y0, msg, scale = 1.0) {
       let message = msg.toLowerCase()
       var x = x0;
       for (let i = 0; i<message.length; i++) {
@@ -52,12 +58,23 @@ function drawArrow(base, vec, myColor, weight, simple = false) {
 
 function loadGameData() {
 
-    state = new State();
+    if (state==undefined)
+        state = new State();
 
-    let gameData = JSON.parse( window.localStorage.getItem('CanUControl') );
+    if (player==undefined)
+        player = new Player();
+    
+    if (field==undefined)
+        field = new Field();
+
+    if (dynamic==undefined)
+        dynamic = new Dynamic();
+
+
+    gameData = JSON.parse( window.localStorage.getItem('CanUControl') );
 
     if (gameData==null) {
-        gameData = {character : 0, state : state };
+        gameData = {controller : 'keyboard', character : 0, state : state };
     }
 
     state.points = gameData.state.points;
@@ -79,7 +96,7 @@ function loadGameData() {
 
 
 function saveGameData() {
-    let gameData = {character : player.name, state: state};
+//    let gameData = {controller: game, character : player.name, state: state};
     window.localStorage.setItem('CanUControl', JSON.stringify(gameData));
 }
 

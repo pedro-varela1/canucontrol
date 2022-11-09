@@ -8,22 +8,19 @@
 
     <link rel="stylesheet" href="../libs/jquery-ui/jquery-ui.css">
 
-	<script src="../libs/d3.v3.min.js"></script>
+<!--	<script src="../libs/d3.v3.min.js"></script> -->
 	<script src="../libs/jquery-min.js"></script>
     <script src="../libs/jquery-ui/jquery-ui.min.js"></script>
     <script type="text/javascript" src="../libs/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="../libs/external/node_modules/animejs/lib/anime.min.js"></script>
 
-
+<!--
 	<script src="../libs/plotly-latest.min.js"></script>
 	<script type="text/x-mathjax-config">
 	  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 	</script>
 	<script src="../libs/MathJax-2.7.3/MathJax.js?config=TeX-AMS_CHTML"></script>
-
-    <script src="../libs/p5/p5.js"></script>
-    <script src="../libs/p5/addons/p5.sound.min.js"></script>
-
+-->
 
 	<style type="text/css">
 
@@ -119,6 +116,7 @@ td {
                     <a href='http://www.ufrn.br'><img src="images/ufrn.png" width="30%" style="vertical-align: middle;"></a>
                     <br>
                     <img id = 'soundImg' src='images/no_sound.png' onclick="playBgMusic()" width="100" style="vertical-align: middle; display: none;">
+                    <img id = 'inputImg' src='images/mouse.png' onclick="inputClicked()" width="100" style="vertical-align: middle;">
                 </p> 
             </td>
 
@@ -201,13 +199,62 @@ td {
 
 </body>
 
+<script src="../libs/telemetry.js"></script>
+
+
+<script src="../libs/p5/p5.js"></script>
+<script src="../libs/p5/addons/p5.sound.min.js"></script>
+
+
+<script src="vars.js"></script>
+<script src="model.js"></script>
+<script src="view.js"></script>
+<script src="util.js"></script>
+<script src="Communication.js"></script>
+<script src="GamepadInput.js"></script>
+
 
 <script>
 
 
+let uid = setUid();
 
-var gameData = JSON.parse( window.localStorage.getItem('CanUControl') );
 
+function setup() {
+    console.log('setup');
+    
+    loadGameData();
+    setInputImage();
+    setAnimation();
+
+
+    telemetry('CanUControl', 'init', '', uid);
+}
+
+
+
+
+function setInputImage() {
+    $('#inputImg').attr('src','images/'+gameData.controller + '.png');    
+}
+
+
+
+function setAnimation() {
+    var time = 0.0;
+    for (let i=1; i<=15; i++)
+        $('#char'+i).css('transform-origin','50% 100%');
+    
+    setInterval(()=>{
+        for (let i=1; i<=15; i++) {
+            let scale = (1.0+0.1*Math.sin(time+i));
+            $('#char'+i).css('transform', 'scaleY('+scale+')');
+        }
+        time += 0.1;
+
+    },10);
+
+}
 
 function doAnimation(menu) {
     
@@ -258,20 +305,7 @@ function play() {
 }
 
 
-var time = 0.0;
-for (let i=1; i<=15; i++)
-    $('#char'+i).css('transform-origin','50% 100%');
-animFnc = ()=>{
-    for (let i=1; i<=15; i++) {
-        let scale = (1.0+0.1*Math.sin(time+i));
-        $('#char'+i).css('transform', 'scaleY('+scale+')');
-    }
-    time += 0.1;
-    setTimeout(()=>{
-        animFnc();
-    },10);
-}
-animFnc();
+
 
 
 
@@ -301,6 +335,8 @@ animFnc();
                 buttons : {
                     "Ok" : () => {
                         $('#dialog-confirm').dialog( "close" );
+                        
+                        openFullscreen();
                     }
                 },
                 close : () => {
@@ -312,9 +348,6 @@ animFnc();
     }
 
 
-    function setup() {
-        //bgMusic.play();
-    }
 
 
     function playBgMusic() {
@@ -329,11 +362,53 @@ animFnc();
 
 
 
+    function inputClicked() {
+        switch (gameData.controller) {
+            case 'gamepad':
+                gameData.controller = 'websocket';
+                break;
+            
+            case 'websocket':
+                gameData.controller = 'keyboard';
+                break;
+
+            case 'keyboard':
+                gameData.controller = 'mouse';
+                break;
+
+            case 'mouse':
+                gameData.controller = 'gamepad';
+                break;
+        }
+        
+
+        $('#inputImg').attr('src','images/'+gameData.controller + '.png');
+
+
+        saveGameData();
+    }
+
+
+
+
+    function openFullscreen() {
+
+        return;
+
+        let elem = document.documentElement;
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) { /* Safari */
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE11 */
+            elem.msRequestFullscreen();
+        }
+    }
+
 </script>
 
 <script src="../libs/helpLib.js"></script>
 <link rel="stylesheet" href="../libs/helpLib.css">
-
 
 
 </html>

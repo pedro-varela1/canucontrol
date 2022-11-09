@@ -104,7 +104,15 @@ body {
 <script src="../libs/p5/p5.js"></script>
 <script src="../libs/p5/addons/p5.sound.min.js"></script>
 
+<script src="../libs/telemetry.js"></script>
+<script type="text/javascript">
+    let uid = setUid();
+    telemetry('CanUControl', 'map', 'init', uid);
+</script>
+
+
 <script>
+
 
 let _positions = [ 
 [{x:60, y:160}, {x:120, y:100}, {x:220, y:150},  {x:300, y:240} ],
@@ -127,6 +135,7 @@ let gameData = JSON.parse( window.localStorage.getItem('CanUControl') );
 
 if (gameData == null) {
     gameData = {
+        controller : 'keyboard',
         character : 0,
         state : {
             level : 1,
@@ -190,6 +199,8 @@ function reset() {
         }
     });
     //window.localStorage.clear()
+
+    telemetry('CanUControl', 'map', 'reset', uid);
 }
 
 
@@ -207,6 +218,7 @@ animFnc();
 
 
 </script>
+
 
 
 <script src="../libs/helpLib.js"></script>
@@ -240,9 +252,14 @@ animFnc();
             $('#soundImg').attr('src','images/no_sound.png');
             bgMusic.stop();
         }
+
+        telemetry('CanUControl', 'map', 'music', uid);
     }
 
+
 </script>
+
+
 
 
 

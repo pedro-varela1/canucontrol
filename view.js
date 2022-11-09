@@ -6,8 +6,8 @@ class Renderer {
 
 
     drawDashboard(state) {
-        print(10, 10, 'targets: ' + state.targets + ' points: ' + state.points + ' deaths: ' + state.deaths, 0.3);
-        print(700, 700, 'world: ' + state.land + ' land:' + state.level, 0.3);
+        coolPrint(10, 10, 'targets: ' + state.targets + ' points: ' + state.points + ' deaths: ' + state.deaths, 0.3);
+        coolPrint(700, 700, 'world: ' + state.land + ' land:' + state.level, 0.3);
     }
 
 

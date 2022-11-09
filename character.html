@@ -141,7 +141,14 @@ td {
 
 <script src="../libs/p5/p5.js"></script>
 
+<script type="text/javascript">
+    let uid = setUid();
+    telemetry('CanUControl', 'character', '', uid);
+</script>
+
+
 <script>
+
 
 
 var gameData = JSON.parse( window.localStorage.getItem('CanUControl') );
@@ -163,6 +170,8 @@ function selectChar(j) {
     gameData.character = j-1;
 
     window.localStorage.setItem('CanUControl', JSON.stringify(gameData));
+
+    telemetry('CanUControl', 'character', j, uid);
 }
 
 
@@ -194,6 +203,8 @@ animFnc();
 <script src="../libs/helpLib.js"></script>
 <link rel="stylesheet" href="../libs/helpLib.css">
 
+
+<script src="../libs/telemetry.js"></script>
 
 
 </html>

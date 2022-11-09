@@ -1,4 +1,5 @@
 
+
 function preload() {
 
   // float font image characters
@@ -20,11 +21,11 @@ function preload() {
 
 
   // load sounds  
-  soundFormats('mp3', 'wav');
-  sounds.bonus = loadSound('sounds/cash.wav');
-  sounds.target = loadSound('sounds/ovation.wav');
-  sounds.death = loadSound('sounds/lol.wav');
-  sounds.beep = loadSound('sounds/beep.wav');
+  soundFormats('wav', 'mp3');
+  sounds.bonus = loadSound('sounds/cash.mp3');
+  sounds.target = loadSound('sounds/ovation.mp3');
+  sounds.death = loadSound('sounds/lol.mp3');
+  sounds.beep = loadSound('sounds/beep.mp3');
 }
 
 
@@ -47,6 +48,8 @@ function playBgMusic(force) {
         if (sounds.bgMusic.isPlaying())
           sounds.bgMusic.stop();
     }
+
+    telemetry('CanUControl', 'level', 'music', uid);  
 }
 
 
@@ -79,6 +82,8 @@ function setPause() {
     $('#pauseButton').css('filter','grayscale(0%)');
   }
   PAUSE = !PAUSE;
+
+  telemetry('CanUControl', 'pause', PAUSE, uid);  
 }
 
 
@@ -93,7 +98,8 @@ function restartButtonClicked() {
     // restartLevel('-10 points...', true); 
     player.init();
   })    
-
+  
+  telemetry('CanUControl', 'restart', '', uid);  
 }
 
 
@@ -104,7 +110,6 @@ event for going back to main menu
 function backButtonClicked() {
   window.location = 'index.html';
 }
-
 
 
   
@@ -123,7 +128,7 @@ function setAutoPilot() {
 
   autoPilot = !autoPilot;
 
-  console.log(autoPilot);
+  telemetry('CanUControl', 'autoPilot', autoPilot, uid);  
 }
 
   
@@ -206,7 +211,11 @@ function targetCollision(p1, p2) {
   // increase level and answer wo all callbacks
   state.increaseLevel(
 
+     // callbackLevel 
     (newState) => {
+
+      gameData.state = newState;
+
       field.stateTransitionFnc = _dynamics[newState.land-1][newState.level-1];
 
       saveGameData();
@@ -219,17 +228,23 @@ function targetCollision(p1, p2) {
           loadBgMusic(state);
         });
       }
-      
     }, 
+
+    // callbackLand 
     (newState) => {
+
+      gameData.state = newState;
 
       showImageDialog(_landCompleteImages[state.land-2], ()=>{
         window.location = 'map.html';
       });
-
-
     }, 
+
+    // callbackGame
     (newState) => {
+
+      gameData.state = newState;
+
       state.game += 1;
 
       saveGameData();
@@ -325,7 +340,7 @@ function setup() {
   // load game data from local storage
   loadGameData();   
 
-  
+
   initBonuses();
   initEnemies();
   
@@ -344,6 +359,57 @@ function setup() {
     
     loadBgMusic(state);
   })    
+
+
+  // stablish events depending on the joystick
+  switch (gameData.controller) {
+
+    case 'gamepad':
+      gamepad = new GamepadInput();
+      gamepad.init();  
+
+      setInterval(()=>{
+        gamepad.scangamepads();
+        
+        if (gamepad.controllers.length > 0) {
+          moveJoystick(-gamepad.controllers[0].axes[3]);
+        }
+
+      },50);
+      break;
+
+
+    case 'websocket':
+      // create a websocket connection
+      comm = new Communication(
+        // onconnect callback
+        ()=>{}, 
+      
+        // onmessage callback
+        (data) => {
+          // parse control signal
+          let input = parseFloat(data);
+
+          // move joystick to that control signal
+          moveJoystick(input);
+
+
+          // assemble array of game data
+          bonusesPos = [];
+          bonuses.forEach( (e)=>{ bonusesPos = bonusesPos.concat([e.position.x, e.position.y]) } );
+
+          enemiesPos = [];
+          enemies.forEach( (e)=>{ enemiesPos = enemiesPos.concat([e.position.x, e.position.y]) } );
+
+          // returns array of game data
+          return [gameData.state.game, gameData.state.land, gameData.state.level, player.position.x, player.position.y, target.position.x, target.position.y].concat(bonusesPos).concat(enemiesPos);
+
+      });
+    }
+
+
+
+  telemetry('CanUControl', 'setup', JSON.stringify(gameData.state), uid);
 
 }
 
@@ -382,61 +448,6 @@ function draw() {
 
     state.frame += 1;
 
-    //console.log(frame);
-
-    //[-5.2*x + 2.5*y + 3.2*u, -9*x - 0.8*y + 5.0*u];
-/*      
-    KP = 10.0;
-    KI = 5.5;
-
-    u = joystick.value;
-    a11 = -5.2;
-    a12 =  2.5;
-    b1 = 3.2;
-    a21 =-9;
-    a22 = - 0.8;
-    b2 = 5.0;
-    x1s = target.position.x;
-    x2s = target.position.y;
-    x1 = player.position.x;
-    x2 = player.position.y;
-*/
-
-/*
-    stateError1 = x1s - x1;
-    stateError2 = x2s - x2;
-
-    dStateError1 = stateError1 - stateError1N_1;
-    dStateError2 = stateError2 - stateError2N_1;
-
-    uStar += KP*(dStateError1 + dStateError2)/2 + KI*(stateError1 + stateError2);
-
-
-    stateError1N_2 = stateError1N_1;
-    stateError2N_2 = stateError2N_1;
-    
-    stateError1N_1 = stateError1;
-    stateError2N_1 = stateError2;
-*/
-
-/*
-    uStar = 0.0;
-
-    dX1s = x1s - x1;
-    dX2s = x2s - x2;
-
-    var dMin = 100000.0;
-    for (let ut=-1.0; ut<1.0; ut+=0.05) {
-      dXt = field.stateTransitionFnc(x1, x2, ut);
-
-      let d = (dXt[0]-dX1s)*(dXt[0]-dX1s) + (dXt[1]-dX2s)*(dXt[1]-dX2s);
-
-      if (d<dMin) {
-        dMin = d;
-        uStar = ut;
-      }
-    }
-*/
 
 
     // auto pilot code
@@ -455,14 +466,14 @@ function draw() {
 
 
 
-
-
-    if (keyIsDown(UP_ARROW)) {
-      moveJoystick(joystick.value + 0.05);
-    }
-  
-    if (keyIsDown(DOWN_ARROW)) {
-      moveJoystick(joystick.value - 0.05);
+    if (gameData.controller == 'keyboard') {
+      if (keyIsDown(UP_ARROW)) {
+        moveJoystick(joystick.value + 0.05);
+      }
+    
+      if (keyIsDown(DOWN_ARROW)) {
+        moveJoystick(joystick.value - 0.05);
+      }
     }
 
 

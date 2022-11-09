@@ -21,6 +21,19 @@ let uMax = 1.0;
 
 var autoPilot = false;
 
+
+let comm = undefined;
+
+let gamepad = undefined;
+var useGamepad = true;
+
+
+
+var gameData = null;
+
+
+
+
 let joystick = {
     element : undefined,
     x : 0.9,
